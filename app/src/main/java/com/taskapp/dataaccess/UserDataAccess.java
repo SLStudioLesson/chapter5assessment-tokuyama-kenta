@@ -64,6 +64,7 @@ public class UserDataAccess {
             while ((line = reader.readLine()) != null) {
                 String[] userparts = line.split(",");
                 int Code = Integer.parseInt(userparts[0]);
+                if(code != Code) continue;
                 String name = userparts[1];
                 String Email = userparts[2];
                 String Password = userparts[3];

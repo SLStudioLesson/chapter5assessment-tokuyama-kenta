@@ -1,11 +1,14 @@
 package com.taskapp.dataaccess;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.taskapp.exception.AppException;
 import com.taskapp.model.Task;
 import com.taskapp.model.User;
 
@@ -46,8 +49,7 @@ public class TaskDataAccess {
             int Code = Integer.parseInt(taskparts[0]);
             String Nmae = taskparts[1];
             int status = Integer.parseInt(taskparts[2]);
-            User Repuser = taskparts[3];
-
+            User Repuser = userDataAccess.findByCode(Integer.parseInt(taskparts[3]));
             //マッピングしてtasksに追加
             Task task = new Task(Code, Nmae, status,Repuser);
             tasks.add(task);
@@ -58,18 +60,25 @@ public class TaskDataAccess {
         }
         return tasks;
     }
+}
+            
+            
+
 
     /**
      * タスクをCSVに保存します。
      * @param task 保存するタスク
      */
-    // public void save(Task task) {
-    //     try () {
-
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    // }
+    public void save(Task task) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
+            String line = createLine(task);
+            writer.newLine();
+            writer.write(line);
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * コードを基にタスクデータを1件取得します。
@@ -114,6 +123,7 @@ public class TaskDataAccess {
      * @param task フォーマットを作成するタスク
      * @return CSVに書き込むためのフォーマット文字列
      */
-//     private String createLine(Task task) {
-//         return 
-// }
+    private String createLine(Task task) {
+        return task.getCode() + "," + task.getName() + "," + task.getStatus()
+        + "," + task.getRepUser();
+}
