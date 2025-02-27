@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import com.taskapp.exception.AppException;
 import com.taskapp.logic.TaskLogic;
 import com.taskapp.logic.UserLogic;
 import com.taskapp.model.User;
@@ -45,7 +46,7 @@ public class TaskUI {
      */
     public void displayMenu() {
         System.out.println("タスク管理アプリケーションにようこそ!!");
-
+        inputLogin();
         // メインメニュー
         boolean flg = true;
         while (flg) {
@@ -59,6 +60,7 @@ public class TaskUI {
 
                 switch (selectMenu) {
                     case "1":
+                        taskLogic.showAll(loginUser);
                         break;
                     case "2":
                         break;
@@ -82,8 +84,26 @@ public class TaskUI {
      *
      * @see com.taskapp.logic.UserLogic#login(String, String)
      */
-    // public void inputLogin() {
-    // }
+    public void inputLogin() {
+        boolean flg = true;
+        while(flg){
+            try{
+                System.out.print("メールアドレスを入力してください：");
+                String email = reader.readLine();
+                System.out.print("パスワードを入力してください：");
+                String password = reader.readLine();
+                //入力された値を引数として受け取りloginメソッドを呼び出す
+                loginUser = userLogic.login(email, password);
+                System.out.println();
+                flg = false;
+
+            }catch(IOException e){
+                e.printStackTrace();
+            }catch(AppException e){
+                System.out.println(e.getMessage());
+            }
+        }
+    }
 
     /**
      * ユーザーからの新規タスク情報を受け取り、新規タスクを登録します。
@@ -128,7 +148,8 @@ public class TaskUI {
      * @param inputText 判定する文字列
      * @return 数値であればtrue、そうでなければfalse
      */
-    // public boolean isNumeric(String inputText) {
-    //     return false;
-    // }
+    public boolean isNumeric(String inputText) {
+        
+        return false;
+    }
 }
