@@ -9,13 +9,13 @@ import com.taskapp.model.Log;
 public class LogDataAccess {
     private final String filePath;
 
-
     public LogDataAccess() {
         filePath = "app/src/main/resources/logs.csv";
     }
 
     /**
      * 自動採点用に必要なコンストラクタのため、皆さんはこのコンストラクタを利用・削除はしないでください
+     * 
      * @param filePath
      */
     public LogDataAccess(String filePath) {
@@ -28,7 +28,7 @@ public class LogDataAccess {
      * @param log 保存するログ
      */
     public void save(Log log) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath,true))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
             String line = createLine(log);
             writer.newLine();
             writer.write(line);
@@ -44,12 +44,12 @@ public class LogDataAccess {
      * @return すべてのログのリスト
      */
     // public List<Log> findAll() {
-    //     try () {
+    // try () {
 
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    //     return null;
+    // } catch (IOException e) {
+    // e.printStackTrace();
+    // }
+    // return null;
     // }
 
     /**
@@ -59,11 +59,11 @@ public class LogDataAccess {
      * @param taskCode 削除するログのタスクコード
      */
     // public void deleteByTaskCode(int taskCode) {
-    //     try () {
+    // try () {
 
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
+    // } catch (IOException e) {
+    // e.printStackTrace();
+    // }
     // }
 
     /**
@@ -74,7 +74,7 @@ public class LogDataAccess {
      */
     private String createLine(Log log) {
         return log.getTaskCode() + "," + log.getChangeUserCode() + "," + log.getStatus() + ","
-            + log.getChangeDate();
+                + log.getChangeDate();
     }
 
 }

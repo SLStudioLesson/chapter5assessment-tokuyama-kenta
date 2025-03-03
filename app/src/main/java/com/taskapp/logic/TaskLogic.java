@@ -1,13 +1,13 @@
 package com.taskapp.logic;
 
-import java.io.EOFException;
-import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 import com.taskapp.dataaccess.LogDataAccess;
 import com.taskapp.dataaccess.TaskDataAccess;
 import com.taskapp.dataaccess.UserDataAccess;
 import com.taskapp.exception.AppException;
+import com.taskapp.model.Log;
 import com.taskapp.model.Task;
 import com.taskapp.model.User;
 
@@ -45,18 +45,15 @@ public class TaskLogic {
         List<Task> tasks = taskDataAccess.findAll();
 
         tasks.forEach(n -> {
-            // 0の場合
             String status = "未着手";
-            // 1の場合
             if (n.getStatus() == 1) {
                 status = "着信中";
-                // 2の場合
             } else if (n.getStatus() == 2) {
                 status = "完了";
             }
 
             String name = " ";
-            //
+
             if (n.getRepUser().getName().equals(loginUser.getName())) {
                 name = "あなた";
             } else {
@@ -83,14 +80,17 @@ public class TaskLogic {
      * @throws AppException ユーザーコードが存在しない場合にスローされます
      */
     public void save(int code, String name, int repUserCode, User loginUser) throws AppException {
-        User user = userDataAccess.findByCode(code);
+        User user = userDataAccess.findByCode(repUserCode);
         if (user == null) {
             throw new AppException("存在するユーザーコードを入力してください");
         }
-        
+        System.out.println(name + "の登録が完了しました。");
+        Task task = new Task(code, name, 0, user);
+        taskDataAccess.save(task);
 
+        Log log = new Log(code, 0, repUserCode, LocalDate.now());
+        logDataAccess.save(log);
     }
-
 
     /**
      * タスクのステータスを変更します。
@@ -103,9 +103,24 @@ public class TaskLogic {
      * @param loginUser ログインユーザー
      * @throws AppException タスクコードが存在しない、またはステータスが前のステータスより1つ先でない場合にスローされます
      */
-    // public void changeStatus(int code, int status,
-    // User loginUser) throws AppException {
-    // }
+    public void changeStatus(int code, int status, User loginUser) throws AppException {
+        Task task = taskDataAccess.findByCode(code);
+
+        if (task == null) {
+            throw new AppException("存在するタスクコードを入力してください");
+        }
+
+        if ((status == 1 && task.getStatus() == 0) || (status == 2 && task.getStatus() == 1)) {
+            task.setStatus(status);
+            taskDataAccess.update(task);
+            System.out.println("ステータスの変更が完了しました。");
+        } else {
+            throw new AppException("ステータスは、前のステータスより1つ先のもののみを選択してください");
+        }
+
+        Log log = new Log(code, loginUser.getCode(), status, LocalDate.now());
+        logDataAccess.save(log);
+    }
 
     /**
      * タスクを削除します。
